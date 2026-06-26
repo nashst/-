@@ -1,0 +1,6 @@
+{
+  "name": "Aurelius 名片设计与导出工具",
+  "description": "一款专为追求品质与细节的专业人士打造的高级名片在线设计与多格式导出工具，支持导出PDF、PNG、JPG、SVG及设计JSON数据，满足保存与印刷需求。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

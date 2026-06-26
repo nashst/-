@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif-caslon: "Libre Caslon Text", "Playfair Display", serif;
+  --font-sans-hanken: "Hanken Grotesk", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-brand-beige: #F9FAFB;
+  --color-brand-charcoal: #111827;
+  --color-brand-gold: #000000;
+  --color-brand-gold-hover: #1F2937;
+  --color-brand-gray: #6B7280;
+  --color-brand-border: #E5E7EB;
+}
+
+/* Custom Utilities */
+.card-perspective {
+  perspective: 1200px;
+}
+
+.ambient-shadow {
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.04);
+}
+
+.luxury-shadow {
+  box-shadow: 0px 24px 48px rgba(0, 0, 0, 0.08);
+}
+
+.gold-glow {
+  box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.35);
+}
+
+/* Custom transitions and scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Dragging visual cues */
+.dragging-active {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
