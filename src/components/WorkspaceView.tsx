@@ -8,7 +8,7 @@ import {
   Check, Layers, Lock, Unlock, Move, HelpCircle, CheckCircle2, Eye, RefreshCw, 
   FileCode, Settings, FileText, Image, BadgeCent, AlignLeft, AlignCenter, AlignRight,
   GraduationCap, BookOpen, Award, Dna, Atom, Microscope, Wheat, Globe, Brain, 
-  TrendingUp, Database, Lightbulb, Star, Mail, Phone, Shield, Activity
+  TrendingUp, Database, Lightbulb, Star, Mail, Phone, Shield, Activity, QrCode
 } from 'lucide-react';
 
 const IconComponents: { [key: string]: React.ComponentType<any> } = {
@@ -57,6 +57,7 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
   // Submenu show/hide toggles for custom elements
   const [showShapeSelector, setShowShapeSelector] = useState(false);
   const [showIconSelector, setShowIconSelector] = useState(false);
+  const [showQRSelector, setShowQRSelector] = useState(false);
 
   // Hover 3D Tilt state
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -372,6 +373,72 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
     if (!selectedElementId) return;
     const updatedDesign = { ...currentDesign };
     const mapper = (el: TextElement) => el.id === selectedElementId ? { ...el, shapeHeight: height } : el;
+    if (activeSide === 'front') {
+      updatedDesign.front.elements = updatedDesign.front.elements.map(mapper);
+    } else {
+      updatedDesign.back.elements = updatedDesign.back.elements.map(mapper);
+    }
+    onChangeDesign(updatedDesign);
+  };
+
+  const handleAddQRCodeElement = (qrType: 'url' | 'wechat', qrValue: string) => {
+    const newId = `qr-${Date.now()}`;
+    const newElement: TextElement = {
+      id: newId,
+      text: qrType === 'wechat' ? '微信二维码' : '校内主页二维码',
+      key: `custom_qr_${Date.now()}`,
+      x: 50,
+      y: 50,
+      fontSize: 10,
+      fontWeight: 'normal',
+      fontFamily: 'sans',
+      color: activeSide === 'front' ? currentDesign.front.textColor : currentDesign.back.textColor,
+      letterSpacing: '0',
+      align: 'center',
+      type: 'qr_code',
+      qrType: qrType,
+      qrValue: qrValue || 'https://www.sicau.edu.cn',
+      qrSize: 45
+    };
+    const updatedDesign = { ...currentDesign };
+    if (activeSide === 'front') {
+      updatedDesign.front.elements.push(newElement);
+    } else {
+      updatedDesign.back.elements.push(newElement);
+    }
+    onChangeDesign(updatedDesign);
+    setSelectedElementId(newId);
+    showToast(`已在中心添加【${qrType === 'wechat' ? '微信' : '学术网页'}】二维码，可自由拖动并在右侧面板自定义内容`, 'success');
+  };
+
+  const handleQRValueChange = (value: string) => {
+    if (!selectedElementId) return;
+    const updatedDesign = { ...currentDesign };
+    const mapper = (el: TextElement) => el.id === selectedElementId ? { ...el, qrValue: value } : el;
+    if (activeSide === 'front') {
+      updatedDesign.front.elements = updatedDesign.front.elements.map(mapper);
+    } else {
+      updatedDesign.back.elements = updatedDesign.back.elements.map(mapper);
+    }
+    onChangeDesign(updatedDesign);
+  };
+
+  const handleQRTypeChange = (type: 'url' | 'wechat') => {
+    if (!selectedElementId) return;
+    const updatedDesign = { ...currentDesign };
+    const mapper = (el: TextElement) => el.id === selectedElementId ? { ...el, qrType: type } : el;
+    if (activeSide === 'front') {
+      updatedDesign.front.elements = updatedDesign.front.elements.map(mapper);
+    } else {
+      updatedDesign.back.elements = updatedDesign.back.elements.map(mapper);
+    }
+    onChangeDesign(updatedDesign);
+  };
+
+  const handleQRSizeChange = (size: number) => {
+    if (!selectedElementId) return;
+    const updatedDesign = { ...currentDesign };
+    const mapper = (el: TextElement) => el.id === selectedElementId ? { ...el, qrSize: size } : el;
     if (activeSide === 'front') {
       updatedDesign.front.elements = updatedDesign.front.elements.map(mapper);
     } else {
@@ -912,6 +979,39 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
                         const IconComp = IconComponents[el.iconName || 'graduation'] || GraduationCap;
                         return <IconComp style={{ width: `${el.fontSize || 24}px`, height: `${el.fontSize || 24}px`, color: el.color }} />;
                       })()
+                    ) : el.type === 'qr_code' ? (
+                      <div 
+                        className="bg-white p-0.5 border border-gray-100 rounded shadow-xs relative flex flex-col items-center justify-center select-none"
+                        style={{
+                          width: `${el.qrSize || 45}px`,
+                          height: `${el.qrSize || 45}px`
+                        }}
+                      >
+                        {el.qrType === 'wechat' && el.qrValue?.startsWith('data:image') ? (
+                          <img 
+                            src={el.qrValue} 
+                            alt="WeChat QR" 
+                            className="w-full h-full object-contain"
+                            draggable={false}
+                          />
+                        ) : (
+                          <>
+                            <img 
+                              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(el.qrValue || 'https://www.sicau.edu.cn')}`} 
+                              alt="QR Code" 
+                              className="w-full h-full object-contain"
+                              draggable={false}
+                            />
+                            {el.qrType === 'wechat' && (
+                              <div className="absolute inset-0 m-auto w-3 h-3 bg-white rounded-sm flex items-center justify-center border border-gray-100/50 p-[1px]">
+                                <div className="w-full h-full bg-[#07C160] rounded-[1px] flex items-center justify-center">
+                                  <span className="text-[5px] text-white font-bold leading-none scale-[0.85] font-sans">微</span>
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
                     ) : (
                       <p 
                         className={`${fontClass} ${weightClass} ${textAlignment} select-none leading-none tracking-tight break-all`}
@@ -1008,9 +1108,9 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
               <span>添加画布自定义组件 (Add Components)</span>
             </h4>
             
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-4 gap-1.5">
               <button
-                onClick={handleAddTextElement}
+                onClick={() => { handleAddTextElement(); setShowShapeSelector(false); setShowIconSelector(false); setShowQRSelector(false); }}
                 className="p-2 bg-white border border-gray-200 hover:border-emerald-500 hover:text-emerald-600 rounded-md text-[10px] font-bold transition-all flex flex-col items-center gap-1 shadow-sm cursor-pointer"
               >
                 <Type className="w-4 h-4 text-emerald-600" />
@@ -1018,7 +1118,7 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
               </button>
               
               <button
-                onClick={() => { setShowShapeSelector(!showShapeSelector); setShowIconSelector(false); }}
+                onClick={() => { setShowShapeSelector(!showShapeSelector); setShowIconSelector(false); setShowQRSelector(false); }}
                 className={`p-2 bg-white border rounded-md text-[10px] font-bold transition-all flex flex-col items-center gap-1 shadow-sm cursor-pointer ${
                   showShapeSelector ? 'border-emerald-500 text-emerald-600 bg-emerald-50/20' : 'border-gray-200 hover:border-emerald-500 hover:text-emerald-600'
                 }`}
@@ -1028,13 +1128,23 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
               </button>
               
               <button
-                onClick={() => { setShowIconSelector(!showIconSelector); setShowShapeSelector(false); }}
+                onClick={() => { setShowIconSelector(!showIconSelector); setShowShapeSelector(false); setShowQRSelector(false); }}
                 className={`p-2 bg-white border rounded-md text-[10px] font-bold transition-all flex flex-col items-center gap-1 shadow-sm cursor-pointer ${
                   showIconSelector ? 'border-emerald-500 text-emerald-600 bg-emerald-50/20' : 'border-gray-200 hover:border-emerald-500 hover:text-emerald-600'
                 }`}
               >
                 <Sparkles className="w-4 h-4 text-emerald-600" />
                 <span>学术 Icon</span>
+              </button>
+
+              <button
+                onClick={() => { setShowQRSelector(!showQRSelector); setShowShapeSelector(false); setShowIconSelector(false); }}
+                className={`p-2 bg-white border rounded-md text-[10px] font-bold transition-all flex flex-col items-center gap-1 shadow-sm cursor-pointer ${
+                  showQRSelector ? 'border-emerald-500 text-emerald-600 bg-emerald-50/20' : 'border-gray-200 hover:border-emerald-500 hover:text-emerald-600'
+                }`}
+              >
+                <QrCode className="w-4 h-4 text-emerald-600" />
+                <span>二维码</span>
               </button>
             </div>
 
@@ -1083,6 +1193,29 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
                 </div>
               </div>
             )}
+
+            {/* QR Code selection subpanel */}
+            {showQRSelector && (
+              <div className="p-3 bg-white border border-gray-100 rounded-md animate-fade-in space-y-2 text-[10px]">
+                <span className="text-[9px] uppercase tracking-wider font-bold text-gray-400 block mb-1">选择要生成的二维码类型：</span>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => { handleAddQRCodeElement('url', 'https://www.sicau.edu.cn'); setShowQRSelector(false); }}
+                    className="p-2.5 bg-white hover:bg-emerald-50 border border-gray-100 hover:border-emerald-200 rounded-md flex flex-col items-center gap-1.5 transition-all cursor-pointer font-bold text-gray-700"
+                  >
+                    <Globe className="w-4 h-4 text-emerald-600" />
+                    <span>学术部门/教师网页</span>
+                  </button>
+                  <button
+                    onClick={() => { handleAddQRCodeElement('wechat', 'https://www.sicau.edu.cn'); setShowQRSelector(false); }}
+                    className="p-2.5 bg-white hover:bg-emerald-50 border border-gray-100 hover:border-emerald-200 rounded-md flex flex-col items-center gap-1.5 transition-all cursor-pointer font-bold text-gray-700"
+                  >
+                    <QrCode className="w-4 h-4 text-[#07C160]" />
+                    <span>个人微信/联系二维码</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Section B2: Card Elements List */}
@@ -1109,6 +1242,8 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
                           ? `自定义图形 (${el.shapeType === 'rect' ? '矩形' : el.shapeType === 'circle' ? '圆形' : '装饰线'})`
                           : el.type === 'icon'
                           ? `学术图标 (${el.iconName})`
+                          : el.type === 'qr_code'
+                          ? `二维码 (${el.qrType === 'wechat' ? '微信联系' : '学术主页'})`
                           : el.key.startsWith('custom') 
                           ? '自定义文本行' 
                           : el.key === 'name' 
@@ -1143,9 +1278,9 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
                         </button>
                       </div>
                     </div>
-                    {el.type === 'shape' || el.type === 'icon' ? (
+                    {el.type === 'shape' || el.type === 'icon' || el.type === 'qr_code' ? (
                       <div className="text-[10px] text-gray-500 italic pt-1 flex items-center gap-1 select-none">
-                        <span>✨ 已添加，在右侧点击“微调参数”控制尺寸及色彩</span>
+                        <span>✨ 已添加，在下方点击“微调参数”控制尺寸、内容及颜色</span>
                       </div>
                     ) : (
                       <input 
@@ -1172,6 +1307,8 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
                       ? '自定义图形样式微调' 
                       : activeElement.type === 'icon' 
                       ? '学术图标样式微调' 
+                      : activeElement.type === 'qr_code'
+                      ? '二维码样式与内容微调'
                       : '文本字体排版微调'
                     }
                   </span>
@@ -1277,6 +1414,102 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
                       max="100"
                       value={activeElement.fontSize || 24}
                       onChange={(e) => handleFontSizeChange(parseInt(e.target.value))}
+                      className="w-full h-1 bg-brand-border rounded-full appearance-none cursor-pointer accent-emerald-600"
+                    />
+                  </div>
+                </div>
+              ) : activeElement.type === 'qr_code' ? (
+                /* QR CODE CUSTOMIZER */
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] uppercase text-brand-gray font-bold block mb-1">二维码类型 / Mode</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => handleQRTypeChange('url')}
+                        className={`py-1.5 border rounded-sm text-center text-xs cursor-pointer font-semibold transition-all ${
+                          activeElement.qrType === 'url' ? 'border-emerald-600 bg-emerald-50 text-emerald-700 font-bold shadow-xs' : 'border-brand-border text-brand-gray hover:text-brand-charcoal'
+                        }`}
+                      >
+                        网页/主页 URL
+                      </button>
+                      <button
+                        onClick={() => handleQRTypeChange('wechat')}
+                        className={`py-1.5 border rounded-sm text-center text-xs cursor-pointer font-semibold transition-all ${
+                          activeElement.qrType === 'wechat' ? 'border-emerald-600 bg-emerald-50 text-emerald-700 font-bold shadow-xs' : 'border-brand-border text-brand-gray hover:text-brand-charcoal'
+                        }`}
+                      >
+                        微信联系二维码
+                      </button>
+                    </div>
+                  </div>
+
+                  {activeElement.qrType === 'url' ? (
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase text-brand-gray font-bold">校内部门网址或教师主页链接</label>
+                      <input 
+                        type="text"
+                        value={activeElement.qrValue?.startsWith('data:image') ? 'https://www.sicau.edu.cn' : activeElement.qrValue || ''}
+                        onChange={(e) => handleQRValueChange(e.target.value)}
+                        placeholder="例如: https://xy.sicau.edu.cn/info/..."
+                        className="w-full bg-white border border-brand-border px-2.5 py-1.5 text-xs rounded-sm focus:outline-none focus:border-emerald-600 text-brand-charcoal font-semibold shadow-xs"
+                      />
+                      <span className="text-[9px] text-gray-400 block pt-0.5">更改后将自动实时编译为符合学术规范的高清QR二维码</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] uppercase text-brand-gray font-bold block">微信/联系二维码图片</label>
+                      <div className="flex flex-col gap-2">
+                        {activeElement.qrValue?.startsWith('data:image') ? (
+                          <div className="flex items-center gap-3 p-2 bg-emerald-50/30 border border-emerald-100 rounded-sm">
+                            <img src={activeElement.qrValue} alt="WeChat Preview" className="w-8 h-8 object-contain bg-white border border-gray-100 p-0.5 rounded-sm" />
+                            <div className="text-[9px] text-emerald-800">
+                              <span className="font-bold block">✅ 微信二维码已导入</span>
+                              <span>可以继续重新上传或在画布拖动/缩放</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-[9px] text-gray-400 italic">当前使用的是默认占位图（显示带有微标的动态二维码），建议导入您自己的微信名片或群二维码。</div>
+                        )}
+                        <button
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = (e) => {
+                              const file = (e.target as HTMLInputElement).files?.[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onload = () => {
+                                  if (typeof reader.result === 'string') {
+                                    handleQRValueChange(reader.result);
+                                    showToast('微信二维码导入成功！已嵌入设计中', 'success');
+                                  }
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            };
+                            input.click();
+                          }}
+                          className="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-sm text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1 shadow-sm"
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>选择并导入微信二维码图片</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[10px] text-brand-gray font-bold uppercase">
+                      <span>二维码大小 / Size</span>
+                      <span className="font-mono">{activeElement.qrSize || 45}px</span>
+                    </div>
+                    <input 
+                      type="range"
+                      min="20"
+                      max="120"
+                      value={activeElement.qrSize || 45}
+                      onChange={(e) => handleQRSizeChange(parseInt(e.target.value))}
                       className="w-full h-1 bg-brand-border rounded-full appearance-none cursor-pointer accent-emerald-600"
                     />
                   </div>

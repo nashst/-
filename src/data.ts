@@ -100,7 +100,8 @@ export const TEMPLATES: CardTemplate[] = [
           { id: 'e_direction', text: '研究方向：作物抗逆基因挖掘与分子育种机制', key: 'custom1', x: 10, y: 44, fontSize: 7.5, fontWeight: 'normal', fontFamily: 'sans', color: '#6B7280', letterSpacing: '0.02em', align: 'left' },
           { id: 'e3', text: '电话：+86 138 0000 8888', key: 'phone', x: 10, y: 64, fontSize: 9, fontWeight: 'normal', fontFamily: 'mono', color: '#4B5563', letterSpacing: '0.02em', align: 'left' },
           { id: 'e4', text: '邮箱：lin.xy@sicau.edu.cn', key: 'email', x: 10, y: 72, fontSize: 9, fontWeight: 'normal', fontFamily: 'mono', color: '#4B5563', letterSpacing: '0.02em', align: 'left' },
-          { id: 'e5', text: '地址：四川省雅安市雨城区新康路46号 四川农业大学农学院', key: 'address', x: 10, y: 80, fontSize: 8, fontWeight: 'normal', fontFamily: 'sans', color: '#6B7280', letterSpacing: '0.01em', align: 'left' }
+          { id: 'e5', text: '地址：四川省雅安市雨城区新康路46号 四川农业大学农学院', key: 'address', x: 10, y: 80, fontSize: 8, fontWeight: 'normal', fontFamily: 'sans', color: '#6B7280', letterSpacing: '0.01em', align: 'left' },
+          { id: 'qr-agronomy', text: '教师主页/微信', key: 'qrcode', x: 84, y: 72, fontSize: 10, fontWeight: 'normal', fontFamily: 'sans', color: '#1E293B', letterSpacing: '0', align: 'center', type: 'qr_code', qrType: 'wechat', qrValue: 'https://www.sicau.edu.cn', qrSize: 45 }
         ]
       },
       back: {
@@ -150,7 +151,8 @@ export const TEMPLATES: CardTemplate[] = [
           { id: 'f_direction', text: '研究领域：退化林群落演替、生物多样性保育与碳汇效应', key: 'custom1', x: 10, y: 44, fontSize: 7.5, fontWeight: 'normal', fontFamily: 'sans', color: '#4B5563', letterSpacing: '0.02em', align: 'left' },
           { id: 'f3', text: '电话：+86 159 1234 5678', key: 'phone', x: 10, y: 64, fontSize: 9, fontWeight: 'normal', fontFamily: 'mono', color: '#4B5563', letterSpacing: '0.02em', align: 'left' },
           { id: 'f4', text: '邮箱：chenxl@sicau.edu.cn', key: 'email', x: 10, y: 72, fontSize: 9, fontWeight: 'normal', fontFamily: 'mono', color: '#4B5563', letterSpacing: '0.02em', align: 'left' },
-          { id: 'f5', text: '地址：四川省成都市温江区惠民路211号 四川农业大学林学院', key: 'address', x: 10, y: 80, fontSize: 8, fontWeight: 'normal', fontFamily: 'sans', color: '#6B7280', letterSpacing: '0.01em', align: 'left' }
+          { id: 'f5', text: '地址：四川省成都市温江区惠民路211号 四川农业大学林学院', key: 'address', x: 10, y: 80, fontSize: 8, fontWeight: 'normal', fontFamily: 'sans', color: '#6B7280', letterSpacing: '0.01em', align: 'left' },
+          { id: 'qr-forestry', text: '教师主页/微信', key: 'qrcode', x: 84, y: 72, fontSize: 10, fontWeight: 'normal', fontFamily: 'sans', color: '#1B4332', letterSpacing: '0', align: 'center', type: 'qr_code', qrType: 'wechat', qrValue: 'https://www.sicau.edu.cn', qrSize: 45 }
         ]
       },
       back: {

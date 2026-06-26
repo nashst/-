@@ -18,11 +18,14 @@ export interface TextElement {
   isLocked?: boolean;
   
   // Custom component fields
-  type?: 'text' | 'shape' | 'icon';
+  type?: 'text' | 'shape' | 'icon' | 'qr_code';
   shapeType?: 'rect' | 'circle' | 'line';
   shapeWidth?: number;
   shapeHeight?: number;
   iconName?: string;
+  qrType?: 'url' | 'wechat';
+  qrValue?: string;
+  qrSize?: number;
 }
 
 export interface CardSideData {
