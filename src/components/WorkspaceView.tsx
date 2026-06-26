@@ -504,7 +504,7 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
           onChangeDesign(parsed);
           showToast('设计项目导入成功！所有文字、排版和定制位置已完整还原。', 'success');
         } else {
-          showToast('导入失败：该文件似乎不是有效的 Aurelius 项目设计包。', 'error');
+          showToast('导入失败：该文件似乎不是有效的四川农业大学项目设计包。', 'error');
         }
       } catch (err) {
         showToast('导入失败：解析 JSON 数据时发生错误。', 'error');
@@ -655,15 +655,15 @@ export default function WorkspaceView({ currentDesign, onChangeDesign, onNavigat
       // Draw simulated subtle bleed indicator text in corner
       pdf.setFontSize(5);
       pdf.setTextColor(150, 150, 150);
-      pdf.text('Aurelius Bleed Marker [2mm Area Boundary]', 4, 3);
+      pdf.text('SICAU Bleed Marker [2mm Area Boundary]', 4, 3);
 
       // Back page
       pdf.addPage([94, 58], orientation);
       const imgBack = canvasBack.toDataURL('image/png');
       pdf.addImage(imgBack, 'PNG', 2, 2, 90, 54);
-      pdf.text('Aurelius Bleed Marker [2mm Area Boundary]', 4, 3);
+      pdf.text('SICAU Bleed Marker [2mm Area Boundary]', 4, 3);
 
-      pdf.save(`aurelius_print_ready_${Date.now()}.pdf`);
+      pdf.save(`sicau_print_ready_${Date.now()}.pdf`);
 
       // Restore initial user editing state
       setActiveSide(originalSide);
